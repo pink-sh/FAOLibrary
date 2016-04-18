@@ -1,17 +1,10 @@
 library(rCharts)
 library(dplyr)
 plotQuantity <- function(start=1900, end=2100, file="FAOGlobalCaptureDataset2013.csv") {
-  print(file)
   myData <- read.csv(file)
-  print("Aggregating Data")
   aggr1 <- aggregate(myData$QUANTITY, by=list(YR_ITEM=myData$YR_ITEM), FUN=sum)
-  print("Transforming Data")
   aggr12 <- transform(aggr1, YR_ITEM = as.character(YR_ITEM), Quantity = as.numeric(x))
-  print("Filtering Data")
-  print(aggr12)
   aggr13 <- filter(aggr12, YR_ITEM >= start, YR_ITEM <= end)
-  #lines(aggr13)
-  print("Plotting")
   m1 <- mPlot(x = "YR_ITEM", y = c("x"), type = "Line", data = aggr13)
-  m1$save('/home/enrico/Work/R/mychart3.html', standalone = TRUE)
+  m1$save('/home/enrico/Work/R/mychart4.html', standalone = TRUE)
 }
