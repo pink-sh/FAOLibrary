@@ -8,7 +8,7 @@ plotQuantity <- function(start=1900, end=2100, file="FAOGlobalCaptureDataset2013
   print("Transforming Data")
   aggr12 <- transform(aggr1, YR_ITEM = as.character(YR_ITEM), Quantity = as.numeric(x))
   print("Filtering Data")
-  names(aggr12)
+  print(aggr12)
   aggr13 <- filter(aggr12, YR_ITEM >= start, YR_ITEM <= end)
   #lines(aggr13)
   print("Plotting")
