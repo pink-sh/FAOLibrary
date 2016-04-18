@@ -7,5 +7,5 @@ plotQuantity <- function(start=1900, end=2100, file="FAOGlobalCaptureDataset2013
   aggr12 <- transform(aggr1, YR_ITEM = as.character(YR_ITEM), Quantity = as.numeric(x))
   #aggr13 <- filter(aggr12, YR_ITEM >= start, YR_ITEM <= end)
   m1 <- mPlot(x = "YR_ITEM", y = c("x"), type = "Line", data = aggr12)
-  m1$save('files/output.html', standalone = TRUE)
+  m1$save('output.html', standalone = TRUE)
 }
