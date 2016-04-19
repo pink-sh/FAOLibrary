@@ -9,6 +9,18 @@ plotQuantity <- function(start=1900, end=2100, file="FAOGlobalCaptureDataset2013
     m1$save('output.html', standalone = TRUE)
 }
 
+plotQuantityBySpecies <- function(species="ALR", start=1900, end=2100, file="FAOGlobalCaptureDataset2013.csv") {
+  library(rCharts)
+  library(dplyr)
+  myData <- read.csv(file)
+  aggr0 <- filter(myData, ALPHA3CODE == species)
+  aggr1 <- aggregate(aggr0$QUANTITY, by=list(YR_ITEM=aggr0$YR_ITEM), FUN=sum)
+  aggr12 <- transform(aggr1, YR_ITEM = as.character(YR_ITEM), Quantity = as.numeric(x))
+  aggr13 <- filter(aggr12, YR_ITEM >= start, YR_ITEM <= end)
+  m1 <- mPlot(x = "YR_ITEM", y = c("x"), type = "Line", data = aggr13)
+  m1$save('output.html', standalone = TRUE)
+}
+
 getSpecies <- function(file="FAOGlobalCaptureDataset2013.csv") {
   library(jsonlite)
   library(plyr)
