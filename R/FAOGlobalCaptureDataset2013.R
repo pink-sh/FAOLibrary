@@ -33,7 +33,6 @@ plotQuantityByMultipleSpecies <- function(species=c("ALR","LAS", "TUC"), start=1
     aggr02 <- transform(aggr01, YR_ITEM = as.character(YR_ITEM), Quantity = as.numeric(x))
     aggr03 <- filter(aggr02, YR_ITEM >= start, YR_ITEM <= end)
     aggr03$x <- NULL
-
     vector <- c()
     i = 1;
     apply(OUT, 1, function(row1) {
@@ -41,8 +40,10 @@ plotQuantityByMultipleSpecies <- function(species=c("ALR","LAS", "TUC"), start=1
       value <- 0
       apply(aggr03, 1, function(row2) {
         yrIn = row2['YR_ITEM']
-        if (yrOut == yrIn) {
-          value <<- row2['Quantity']
+        if (!is.na(yrIn)) {
+          if (yrOut == yrIn) {
+            value <<- row2['Quantity']
+          }
         }
       })
       vector <<- c(vector, value)
@@ -51,7 +52,6 @@ plotQuantityByMultipleSpecies <- function(species=c("ALR","LAS", "TUC"), start=1
     OUT[[sp]] <- vector
   }
   OUT <- transform(OUT, YR_ITEM = as.character(YR_ITEM))
-  print(OUT)
   m1 <- mPlot(x = "YR_ITEM", y = species, type = "Line", data = OUT)
   m1$save('output.html', standalone = TRUE)
 }
