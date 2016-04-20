@@ -21,6 +21,41 @@ plotQuantityBySpecies <- function(species="ALR", start=1900, end=2100, file="FAO
   m1$save('output.html', standalone = TRUE)
 }
 
+plotQuantityByMultipleSpecies <- function(species=c("ALR","LAS", "TUC"), start=1946, end=2016, file="FAOGlobalCaptureDataset2013.csv") {
+  library(rCharts)
+  library(dplyr)
+  myData <- read.csv(file)
+  reduced <- filter(myData, ALPHA3CODE %in% species)
+  OUT <- data.frame("YR_ITEM"=(start:end))
+  for (sp in species) {
+    aggr0 <- filter(reduced, ALPHA3CODE == sp)
+    aggr01 <- aggregate(aggr0$QUANTITY, by=list(YR_ITEM=aggr0$YR_ITEM), FUN=sum)
+    aggr02 <- transform(aggr01, YR_ITEM = as.character(YR_ITEM), Quantity = as.numeric(x))
+    aggr03 <- filter(aggr02, YR_ITEM >= start, YR_ITEM <= end)
+    aggr03$x <- NULL
+
+    vector <- c()
+    i = 1;
+    apply(OUT, 1, function(row1) {
+      yrOut = row1['YR_ITEM']
+      value <- 0
+      apply(aggr03, 1, function(row2) {
+        yrIn = row2['YR_ITEM']
+        if (yrOut == yrIn) {
+          value <<- row2['Quantity']
+        }
+      })
+      vector <<- c(vector, value)
+      i <<- i + 1
+    })
+    OUT[[sp]] <- vector
+  }
+  OUT <- transform(OUT, YR_ITEM = as.character(YR_ITEM))
+  print(OUT)
+  m1 <- mPlot(x = "YR_ITEM", y = species, type = "Line", data = OUT)
+  m1$save('output.html', standalone = TRUE)
+}
+
 getSpecies <- function(file="FAOGlobalCaptureDataset2013.csv") {
   library(jsonlite)
   library(plyr)
