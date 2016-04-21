@@ -65,3 +65,39 @@ getSpecies <- function(file="FAOGlobalCaptureDataset2013.csv") {
   ret <- ret[!apply(ret, 1, function(x) any(x=="")),]
   return (toJSON(ret))
 }
+
+getSpeciesByLocale <- function(file="FAOGlobalCaptureDataset2013.csv", locale="EN") {
+  library(jsonlite)
+  library(plyr)
+  df <- read.csv(file)
+  species <- read.csv("/usr/local/opencpu/ASFIS_6_languages_160420_utf8.csv", sep = "\t", encoding="UTF-8")
+  plyed <- ddply(df, c("ALPHA3CODE"), head, 1)
+  plyedWithNames <- ddply(df, c("ALPHA3CODE", "FIC_ITEM_NAME_E"), head, 1)
+  ALPHA3 <- data.frame("ALPHA" = plyed$ALPHA3CODE)
+  ALPHA3 <- ALPHA3[!apply(ALPHA3, 1, function(x) any(x=="")),]
+  NAME <- c()
+  for (val in ALPHA3) {
+    row <- lapply(subset(species, X3A_CODE==val), as.character)
+    nm <- row$Scientific_name
+
+    if (identical(nm, character(0))) {
+      rowOrig <- lapply(subset(plyedWithNames, ALPHA3CODE==val), as.character)
+      nm <- rowOrig$FIC_ITEM_NAME_E
+    } else if (locale == "EN" && row$English_name != "") {
+      nm <- row$English_name
+    } else if (locale == "ES" && row$Spanish_name != "") {
+      nm <- row$Spanish_name
+    } else if (locale == "FR" && row$French_name != "") {
+      nm <- row$French_name
+    } else if (locale == "AR" && row$Arabic_name != "") {
+      nm <- row$Arabic_name
+    } else if (locale == "ZH" && row$Chinese_name != "") {
+      nm <- row$Chinese_name
+    } else if (locale == "RU" && row$Russian_name != "") {
+      nm <- row$Russian_name
+    }
+    NAME <- c(NAME, nm)
+  }
+  ret <- data.frame(ALPHA3, NAME)
+  return (toJSON(ret))
+}
