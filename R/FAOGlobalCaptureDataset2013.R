@@ -1,15 +1,15 @@
-plotQuantity <- function(start=1900, end=2100, file="FAOGlobalCaptureDataset2013.csv") {
+plotQuantity <- function(start=1900, end=2100, file="FAOGlobalCaptureDataset2013.csv", chart="Line") {
     library(rCharts)
     library(dplyr)
     myData <- read.csv(file)
     aggr1 <- aggregate(myData$QUANTITY, by=list(YR_ITEM=myData$YR_ITEM), FUN=sum)
     aggr12 <- transform(aggr1, YR_ITEM = as.character(YR_ITEM), Quantity = as.numeric(x))
     aggr13 <- filter(aggr12, YR_ITEM >= start, YR_ITEM <= end)
-    m1 <- mPlot(x = "YR_ITEM", y = c("x"), type = "Line", data = aggr13)
+    m1 <- mPlot(x = "YR_ITEM", y = c("x"), type = chart, data = aggr13)
     m1$save('output.html', standalone = TRUE)
 }
 
-plotQuantityBySpecies <- function(species="ALR", start=1900, end=2100, file="FAOGlobalCaptureDataset2013.csv") {
+plotQuantityBySpecies <- function(species="ALR", start=1900, end=2100, file="FAOGlobalCaptureDataset2013.csv", chart="Line") {
   library(rCharts)
   library(dplyr)
   myData <- read.csv(file)
@@ -17,11 +17,11 @@ plotQuantityBySpecies <- function(species="ALR", start=1900, end=2100, file="FAO
   aggr1 <- aggregate(aggr0$QUANTITY, by=list(YR_ITEM=aggr0$YR_ITEM), FUN=sum)
   aggr12 <- transform(aggr1, YR_ITEM = as.character(YR_ITEM), Quantity = as.numeric(x))
   aggr13 <- filter(aggr12, YR_ITEM >= start, YR_ITEM <= end)
-  m1 <- mPlot(x = "YR_ITEM", y = c("x"), type = "Line", data = aggr13)
+  m1 <- mPlot(x = "YR_ITEM", y = c("x"), type = chart, data = aggr13)
   m1$save('output.html', standalone = TRUE)
 }
 
-plotQuantityByMultipleSpecies <- function(species=c("ALR","LAS", "TUC"), start=1946, end=2016, file="FAOGlobalCaptureDataset2013.csv") {
+plotQuantityByMultipleSpecies <- function(species=c("ALR","LAS", "TUC"), start=1946, end=2016, file="FAOGlobalCaptureDataset2013.csv", chart="Line") {
   library(rCharts)
   library(dplyr)
   myData <- read.csv(file)
@@ -52,7 +52,7 @@ plotQuantityByMultipleSpecies <- function(species=c("ALR","LAS", "TUC"), start=1
     OUT[[sp]] <- vector
   }
   OUT <- transform(OUT, YR_ITEM = as.character(YR_ITEM))
-  m1 <- mPlot(x = "YR_ITEM", y = species, type = "Line", data = OUT)
+  m1 <- mPlot(x = "YR_ITEM", y = species, type = chart, data = OUT)
   m1$save('output.html', standalone = TRUE)
 }
 
